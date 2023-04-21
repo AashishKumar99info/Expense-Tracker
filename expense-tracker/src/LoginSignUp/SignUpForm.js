@@ -3,7 +3,7 @@ import "./SignUpForm.css";
 
 async function signUp(signupData){
     try {
-        const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAxhjmf-7rW1ksNylVM86GVw66RsWfd3II', 
+        const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0', 
         {
           method: 'POST',
           headers: {
