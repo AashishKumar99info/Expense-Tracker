@@ -1,9 +1,10 @@
+import SignupForm from "./LoginSignUp/SignUpForm";
 
 
 function App() {
   return (
     <div>
-      <h1><p>hello</p></h1>
+      <SignupForm />
     </div>
   );
 }
