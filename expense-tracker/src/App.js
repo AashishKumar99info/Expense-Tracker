@@ -1,10 +1,14 @@
-import SignupForm from "./LoginSignUp/SignUpForm";
-
+import SignupForm from "./components/LoginSignUp/SignUpForm";
+import {Routes,Route} from "react-router-dom"
+import Home from "./components/Pages/HomePage/Home";
 
 function App() {
   return (
     <div>
-      <SignupForm />
+      <Routes>
+        <Route path = '/' element = {<SignupForm/>}></Route>
+        <Route path = '/home/:idToken' element = {<Home />}></Route>
+      </Routes>
     </div>
   );
 }
