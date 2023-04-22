@@ -33,7 +33,7 @@ async function signUp(signupData, isLoggedIn, Actions) {
     console.log(data); // contains the Firebase ID token, refresh token, and other user data
     console.log('User has successfully signed up.')
   } catch (error) {
-    console.error(error); // handle signup error
+    console.log(error(error)); // handle signup error
     throw error;
   }
 }
