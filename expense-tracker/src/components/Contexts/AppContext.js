@@ -7,6 +7,8 @@ export const AppContext = React.createContext({
     email:'',
     displayName:'',
     displayImage:'',
+    isEmailVerified: false,
+    setIsEmailVerified:()=>{},
     setEmail:()=>{},
     setDisplayName:()=>{},
     setDisplayImage:()=>{},
@@ -22,6 +24,7 @@ function ContextProvider (props) {
     const[email, setEmail] = useState('youremail@email.com');
     const[displayName ,setDisplayName] = useState('Display Name');
     const[displayImage , setDisplayImage] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKo76YVrnnPieB27rFfO4k43aaWCgI0o4Dr3WC8TNVvU4wDS-s7c1vcXk6CpO5S9zOtuA&usqp=CAU')
+    const [isEmailVerified,setIsEmailVerified] = useState();
     
 
     const ctxObj = {
@@ -32,6 +35,8 @@ function ContextProvider (props) {
         email:email,
         displayName:displayName,
         displayImage:displayImage,
+        isEmailVerified:isEmailVerified,
+        setIsEmailVerified:setIsEmailVerified,
         setEmail:setEmail ,
         setDisplayName:setDisplayName,
         setDisplayImage:setDisplayImage,
