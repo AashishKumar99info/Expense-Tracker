@@ -88,3 +88,7 @@
     margin: 0;
     margin-right: 10px;
   }
+  .login-card:hover {
+    background-color: #eff5fa;
+    cursor: pointer;
+  }

@@ -23,17 +23,24 @@ async function signUp(signupData, isLoggedIn, Actions) {
       // console.log(data.error.message)
     }
     else {
-      if (isLoggedIn) {
+      if (data.registered) {
         Actions.navto(`/home/${data.idToken}`)
-        Actions.LoggedIn(true);
-        Actions.idToken(data.idToken)
+        Actions.context.setIsLoggedIn(true)
+        Actions.context.setEmail(data.email)
+        Actions.context.setDisplayName(data.displayName)
+        Actions.context.setDisplayImage(data.profilePicture)
+        Actions.context.setidToken(data.idToken)
+        console.log(data)
+      }
+      else{
+        Actions.setIsLogin(true)
       }
     }
 
     console.log(data); // contains the Firebase ID token, refresh token, and other user data
     console.log('User has successfully signed up.')
   } catch (error) {
-    console.log(error(error)); // handle signup error
+    console.error(error); // handle signup error
     throw error;
   }
 }
@@ -48,15 +55,15 @@ function SignupForm(props) {
 
 
   const handleSubmit = (event) => {
+    event.preventDefault();
     const userDetails = {
       email: email,
       password: password,
       returnSecureToken: true,
     };
 
-    event.preventDefault();
+    const actions = {navto:navto,context:ctx,setIsLogin:setIsLogin}
     if (isLogIn) {
-      const actions = { navto: navto, LoggedIn: ctx.setIsLoggedIn, idToken: ctx.setidToken }
       signUp(userDetails, isLogIn, actions);
       setEmail("");
       setPassword("");
@@ -65,7 +72,7 @@ function SignupForm(props) {
 
       if (password === confirmPassword) {
 
-        signUp(userDetails, isLogIn)
+        signUp(userDetails, isLogIn , actions)
 
       } else {
 
