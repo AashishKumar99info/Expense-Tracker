@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path = '/' element = {<SignupForm/>}></Route>
         <Route path = '/home/:idToken' element = {<Home />}></Route>
-        <Route path = "/profile/:idToken" element={<ProfilePage />}></Route>
+        <Route path = "/profile/:idToken" element={<ProfilePage />}></Route>  
       </Routes>
     </div>
   );

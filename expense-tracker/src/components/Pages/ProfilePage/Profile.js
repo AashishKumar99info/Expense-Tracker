@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState ,useEffect } from 'react';
 import './Profile.css'
 import { useParams } from 'react-router-dom';
 import { AppContext } from '../../Contexts/AppContext';
@@ -21,6 +21,27 @@ try {
 }
 }
 
+async function getUserProfile(idToken , ctx) {
+  const firebaseApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0`;
+
+  try {
+    const response = await fetch(firebaseApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({idToken:idToken}),
+    });
+    const data = await response.json();
+    ctx.setDisplayName(data.users[0].displayName);
+    ctx.setDisplayImage(data.users[0].photoUrl)
+    ctx.setEmail(data.users[0].email)
+    console.log(data); // contains the updated user profile data
+  } catch (error) {
+    console.error(error); // handle update error
+  }
+}
+
 
 
 function ProfilePage(props) {
@@ -29,6 +50,9 @@ function ProfilePage(props) {
 
   const [newName, setNewName] = useState('');
   const [newImage, setNewImage] = useState('');
+  useEffect(()=>{
+    getUserProfile(ctx.idToken , ctx)
+  },[ctx])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -72,6 +96,7 @@ function ProfilePage(props) {
             id="name-input"
             value={newName}
             onChange={handleNameChange}
+            required
           />
           <label htmlFor="image-input">Profile Picture URL:</label>
           <input
@@ -79,6 +104,7 @@ function ProfilePage(props) {
             id="image-input"
             value={newImage}
             onChange={handleImageChange}
+            required
           />
           <button type="submit">Update Profile</button>
         </form>
