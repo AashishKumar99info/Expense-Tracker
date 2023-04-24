@@ -30,10 +30,10 @@ async function signUp(signupData, isLoggedIn, Actions) {
         Actions.context.setDisplayName(data.displayName)
         Actions.context.setDisplayImage(data.profilePicture)
         Actions.context.setidToken(data.idToken)
-        localStorage.setItem('idToken' , data.idToken)
+        localStorage.setItem('idToken', data.idToken)
         console.log(data)
       }
-      else{
+      else {
         Actions.setIsLogin(true)
       }
     }
@@ -63,7 +63,7 @@ function SignupForm(props) {
       returnSecureToken: true,
     };
 
-    const actions = {navto:navto,context:ctx,setIsLogin:setIsLogin}
+    const actions = { navto: navto, context: ctx, setIsLogin: setIsLogin }
     if (isLogIn) {
       signUp(userDetails, isLogIn, actions);
       setEmail("");
@@ -73,7 +73,7 @@ function SignupForm(props) {
 
       if (password === confirmPassword) {
 
-        signUp(userDetails, isLogIn , actions)
+        signUp(userDetails, isLogIn, actions)
 
       } else {
 
@@ -123,6 +123,13 @@ function SignupForm(props) {
         )}
         <button type="submit">{`${isLogIn ? "Login" : "Sign Up"}`}</button>
       </form>
+      {isLogIn ? (
+        <p className="forgot-password">
+          <a href="/forgot-password">Forgot password?</a>
+        </p>
+      ) : (
+        ""
+      )}
       <button className="login-card" onClick={handleLoginClick}>
         <p className="login-text">{`${isLogIn ? "Create New Account" : "Already Have An Account ? Login"
           }`}</p>
