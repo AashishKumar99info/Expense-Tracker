@@ -12,10 +12,18 @@ function Home() {
         return <p> Page Not Found !</p>
     }
 
+    const logoutHandler = () => {
+        localStorage.setItem('idToken', '');
+        ctx.setIsLoggedIn(false);
+        ctx.setidToken(null);
+        navTo('/');
+    }
+
     return (
         <div>
             <div className="welcome">
-                Welcome To Your Expense Tracker !!!
+                <p>Welcome To Your Expense Tracker !!!</p>
+                <button className='button-logout' onClick={logoutHandler} >Logout</button>
                 <button className='login-card' onClick={() => navTo(`/profile/${ctx.idToken}`)}>  Your Profile Is Incomplete ! Complete Now </button>
             </div>
         </div>
