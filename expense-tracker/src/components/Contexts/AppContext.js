@@ -1,5 +1,20 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+const getUserData = async (idToken, userID) => {
+    try {
+      const response = await fetch(
+        `https://expense-tracker-cc670-default-rtdb.firebaseio.com/Users/${userID}/expenses.json?auth=${idToken}`
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error);
+      }
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 export const AppContext = React.createContext({
     idToken:'',
@@ -9,6 +24,8 @@ export const AppContext = React.createContext({
     displayImage:'',
     isEmailVerified: false,
     userID:'',
+    expenseList: [],
+    setExpenseList: () => {},
     setUserID:()=>{},
     setIsEmailVerified:()=>{},
     setEmail:()=>{},
@@ -27,9 +44,13 @@ function ContextProvider (props) {
     const[email, setEmail] = useState('youremail@email.com');
     const[displayName ,setDisplayName] = useState('Display Name');
     const[displayImage , setDisplayImage] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKo76YVrnnPieB27rFfO4k43aaWCgI0o4Dr3WC8TNVvU4wDS-s7c1vcXk6CpO5S9zOtuA&usqp=CAU')
-    const [isEmailVerified,setIsEmailVerified] = useState();
+    const [isEmailVerified,setIsEmailVerified] = useState(false);
     const[userID,setUserID] = useState(userLocalID);
+    const [expenseList, setExpenseList] = useState([]);
     
+    useEffect(() => {
+        getUserData(idToken, userID).then((data) => setExpenseList(data));
+      }, [idToken, userID]);
 
     const ctxObj = {
         idToken:idToken,
@@ -38,6 +59,8 @@ function ContextProvider (props) {
         setIsLoggedIn:setIsLoggedIn,
         userID:userID,
         setUserID:setUserID,
+        expenseList: expenseList,
+        setExpenseList: setExpenseList,
         email:email,
         displayName:displayName,
         displayImage:displayImage,
