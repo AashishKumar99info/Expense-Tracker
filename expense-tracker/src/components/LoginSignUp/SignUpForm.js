@@ -30,7 +30,9 @@ async function signUp(signupData, isLoggedIn, Actions) {
         Actions.context.setDisplayName(data.displayName)
         Actions.context.setDisplayImage(data.profilePicture)
         Actions.context.setidToken(data.idToken)
+        Actions.context.setUserID(data.localId)
         localStorage.setItem('idToken', data.idToken)
+        localStorage.setItem('userID' , data.localId);
         console.log(data)
       }
       else {
