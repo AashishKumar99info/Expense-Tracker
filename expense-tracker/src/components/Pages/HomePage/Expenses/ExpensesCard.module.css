@@ -82,3 +82,8 @@
   .deleteButton:hover{
     background-color: #a90818;
   }
+  
+  .dark {
+    background-color: #333333;
+    color: #ffffff;
+  }
