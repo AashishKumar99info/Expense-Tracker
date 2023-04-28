@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import "./SignUpForm.css";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../Contexts/AppContext";
 
-async function signUp(signupData, isLoggedIn, Actions) {
+import { useSelector } from "react-redux";
+import { authStates } from "../States/Reducers/auth-reducer";
+
+import { useDispatch } from "react-redux";
+async function loginAndSignUp(signupData, isLogIn) {
   let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0'
-  if (isLoggedIn) {
+  if (isLogIn) {
     url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0'
   }
   try {
@@ -23,25 +26,13 @@ async function signUp(signupData, isLoggedIn, Actions) {
       // console.log(data.error.message)
     }
     else {
-      if (data.registered) {
-        Actions.navto(`/home/${data.idToken}`)
-        Actions.context.setIsLoggedIn(true)
-        Actions.context.setEmail(data.email)
-        Actions.context.setDisplayName(data.displayName)
-        Actions.context.setDisplayImage(data.profilePicture)
-        Actions.context.setidToken(data.idToken)
-        Actions.context.setUserID(data.localId)
-        localStorage.setItem('idToken', data.idToken)
-        localStorage.setItem('userID' , data.localId);
-        console.log(data)
-      }
-      else {
-        Actions.setIsLogin(true)
-      }
+  
+      return data;
+      
     }
 
-    console.log(data); // contains the Firebase ID token, refresh token, and other user data
-    console.log('User has successfully signed up.')
+  // contains the Firebase ID token, refresh token, and other user data // console.log(data);
+    // console.log('User has successfully signed up.')
   } catch (error) {
     console.error(error); // handle signup error
     throw error;
@@ -53,8 +44,13 @@ function SignupForm(props) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLogIn, setIsLogin] = useState(false);
+  const userIsLoggedIn = useSelector(state=>state.auth.isLoggedIn);
+  const idToken = useSelector(state =>state.auth.idToken)
+  const dispatch = useDispatch(); 
   const navto = useNavigate();
-  const ctx = useContext(AppContext)
+  if(userIsLoggedIn){
+    navto(`/home/${idToken}`)
+  }
 
 
   const handleSubmit = (event) => {
@@ -65,17 +61,27 @@ function SignupForm(props) {
       returnSecureToken: true,
     };
 
-    const actions = { navto: navto, context: ctx, setIsLogin: setIsLogin }
-    if (isLogIn) {
-      signUp(userDetails, isLogIn, actions);
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+
+    if (isLogIn) {;
+      loginAndSignUp(userDetails, isLogIn).then(data=>{
+        if(data.registered){
+          dispatch(authStates.setLogin(true));
+          dispatch(authStates.setIdToken(data.idToken));
+          dispatch(authStates.setUserID(data.localId))
+          localStorage.setItem("idToken", data.idToken);
+          localStorage.setItem('userID' , data.localId);
+          navto(`/home/${data.idToken}`)
+        }
+    });
     } else {
 
       if (password === confirmPassword) {
 
-        signUp(userDetails, isLogIn, actions)
+        loginAndSignUp(userDetails, isLogIn).then(data=>{
+          if(!data.registered){
+              setIsLogin(true);
+          }
+      });
 
       } else {
 

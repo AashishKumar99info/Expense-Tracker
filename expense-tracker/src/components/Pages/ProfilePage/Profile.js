@@ -1,28 +1,29 @@
-import React, { useContext, useState } from 'react';
-import './Profile.css'
-import { useParams } from 'react-router-dom';
-import { AppContext } from '../../Contexts/AppContext';
-import { FaEnvelope, FaCheckCircle} from 'react-icons/fa';
+import React, { useState } from "react";
+import "./Profile.css";
+import { useParams } from "react-router-dom";
+import { FaEnvelope, FaCheckCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
-async function updateUserProfile(details){
-const firebaseApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0`
+async function updateUserProfile(details) {
+  const firebaseApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0`;
 
-try {
-  const response = await fetch(firebaseApiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(details)
-  });
-  const data =  await response.json();
-  console.log(data); // contains the updated user profile data
-} catch (error) {
-  console.error(error); // handle update error
+  try {
+    const response = await fetch(firebaseApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(details),
+    });
+    const data = await response.json();
+    console.log(data); // contains the updated user profile data
+  } catch (error) {
+    console.error(error); // handle update error
+  }
 }
-}
 
-async function getUserProfile(idToken , ctx) {
+async function getUserProfile(idToken) {
   const firebaseApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0`;
 
   try {
@@ -31,66 +32,76 @@ async function getUserProfile(idToken , ctx) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({idToken:idToken}),
+      body: JSON.stringify({ idToken: idToken }),
     });
     const data = await response.json();
-    ctx.setIsEmailVerified(data.users[0].emailVerified)
-    ctx.setDisplayName(data.users[0].displayName);
-    ctx.setDisplayImage(data.users[0].photoUrl)
-    ctx.setEmail(data.users[0].email)
-    console.log(data.users[0].emailVerified)
-    
-    console.log(data); // contains the updated user profile data
+    // ctx.setIsEmailVerified(data.users[0].emailVerified)
+    // ctx.setDisplayName(data.users[0].displayName);
+    // ctx.setDisplayImage(data.users[0].photoUrl)
+    // ctx.setEmail(data.users[0].email)
+    // console.log(data.users[0].emailVerified)
+    return data.users[0];
+
+    // console.log(data); // contains the updated user profile data
   } catch (error) {
     console.error(error); // handle update error
   }
 }
 
-async function verifyEmail(idToken){
+async function verifyEmail(idToken) {
   const firebaseApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBHwPOoN9Mgoiiz-2aKSX1KZNmp_u7SnA0`;
-  
+
   const requestData = {
     idToken: idToken,
-    requestType: 'VERIFY_EMAIL',
+    requestType: "VERIFY_EMAIL",
   };
-  
-  console.log()
+
   try {
     const response = await fetch(firebaseApiUrl, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(requestData)
-});
-
-if(response.ok){
-  alert('check your email to verify')
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    });
+    if (response.ok) {
+      alert("check your email to verify");
+    }
+    const data = await response.json();
+    console.log(data); // contains the response data
+  } catch (error) {
+    console.error(error); // handle error
+  }
 }
-
-const data = await response.json();
-console.log(data); // contains the response data
-} catch (error) {
-console.error(error); // handle error
-}
-
-}  
-
 
 function ProfilePage(props) {
-  const ctx = useContext(AppContext)
-  const params = useParams()
-  
-  // console.log(ctx.email)
-  // console.log(ctx.isEmailVerified)
-  // console.log(ctx.isLoggedIn)
-  
+  // const ctx = useContext(AppContext);
+  const params = useParams();
+  const idToken = useSelector((state) => state.auth.idToken);
+  const [profile, setProfile] = useState({
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKo76YVrnnPieB27rFfO4k43aaWCgI0o4Dr3WC8TNVvU4wDS-s7c1vcXk6CpO5S9zOtuA&usqp=CAU",
+    userName: "Yourname",
+    email: "youremail@gmail.com",
+    isEmailVerified: "false",
+  });
 
-  const [newName, setNewName] = useState('');
-  const [newImage, setNewImage] = useState('');
-  
-  getUserProfile(ctx.idToken,ctx)
+  const [newName, setNewName] = useState("");
+  const [newImage, setNewImage] = useState("");
+  useEffect(()=>{
+    getUserProfile(idToken).then((data) => {
+      const profilDetails = {
+        image: data.photoUrl,
+        userName: data.displayName,
+        email: data.email,
+        isEmailVerified: data.emailVerified,
+      };
+      setProfile(profilDetails);
+    });
+  },[idToken])
 
+
+ console.log(profile)
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -102,34 +113,53 @@ function ProfilePage(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const details = {
-        displayName: newName,
-        photoUrl: newImage,
-        idToken: ctx.idToken,
-        returnSecureToken: true
+      displayName: newName,
+      photoUrl: newImage,
+      idToken: idToken,
+      returnSecureToken: true,
+    };
+    updateUserProfile(details).then((data) => {
+      const profilDetails = {
+        image: newImage,
+        userName: newName,
+        email: profile.email,
+        isEmailVerified: profile.isEmailVerified,
       };
-    updateUserProfile(details)  ;
-    ctx.setDisplayName(newName);
-    ctx.setDisplayImage(newImage);
-    setNewImage('');
-    setNewName('')
+      setProfile(profilDetails);
+    });
+
+    setNewImage("");
+    setNewName("");
   };
-  if(params.idToken !== ctx.idToken ){
-    return <p>Page Not Found</p>
+  if (params.idToken !== idToken) {
+    return <p>Page Not Found</p>;
   }
+
   return (
     <div className="profile">
       <div className="profile-header">
-        <img src={ctx.displayImage} alt="Profile" className="profile-image" />
-        <h1 className="profile-name">{ctx.displayName}</h1>
-        <div style={{display:'flex' , justifyItems:'center' , alignItems:'center'}}>
-        <p className="profile-email">{ctx.email}</p>
-        {ctx.isEmailVerified? (
-          <FaCheckCircle className="email-verified-icon" />
-        ) : (
-          <button className="verify-email-button" onClick={()=>verifyEmail(ctx.idToken)}> verify email <FaEnvelope/></button>
-        )}
+        <img src={profile.image} alt="Profile" className="profile-image" />
+        <h1 className="profile-name">{profile.userName}</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyItems: "center",
+            alignItems: "center",
+          }}
+        >
+          <p className="profile-email">{profile.email}</p>
+          {profile.isEmailVerified ? (
+            <FaCheckCircle className="email-verified-icon" />
+          ) : (
+            <button
+              className="verify-email-button"
+              onClick={() => verifyEmail(idToken)}
+            >
+              {" "}
+              verify email <FaEnvelope />
+            </button>
+          )}
         </div>
-        <p className="profile-email">{ctx.email}</p>
       </div>
       <div className="profile-form">
         <h2 className="form-header">Update Profile</h2>
