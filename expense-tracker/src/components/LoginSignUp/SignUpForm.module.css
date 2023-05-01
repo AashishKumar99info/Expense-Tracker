@@ -30,6 +30,7 @@
     cursor: pointer;
     font-size: medium;
     width: 120px;
+    height: auto;
   }
 
   .signup-form button[type="submit"]:hover {

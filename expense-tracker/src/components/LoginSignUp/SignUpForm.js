@@ -1,8 +1,8 @@
 import React, {  useState } from "react";
-import "./SignUpForm.css";
+import styles from "./SignUpForm.module.css";
 import { useNavigate } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { authStates } from "../States/Reducers/auth-reducer";
 
 import { useDispatch } from "react-redux";
@@ -35,22 +35,26 @@ async function loginAndSignUp(signupData, isLogIn) {
     // console.log('User has successfully signed up.')
   } catch (error) {
     console.error(error); // handle signup error
-    throw error;
+
+    alert(error)
+    
   }
 }
 
-function SignupForm(props) {
+function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLogIn, setIsLogin] = useState(false);
-  const userIsLoggedIn = useSelector(state=>state.auth.isLoggedIn);
-  const idToken = useSelector(state =>state.auth.idToken)
+  // const userIsLoggedIn = useSelector(state=>state.auth.isLoggedIn);
+  // const idToken = useSelector(state =>state.auth.idToken)
   const dispatch = useDispatch(); 
   const navto = useNavigate();
-  if(userIsLoggedIn){
-    navto(`/home/${idToken}`)
-  }
+  
+  // if(userIsLoggedIn){
+  //   navto(`/home/${idToken}`)
+  // } 
+  // this was giving warning
 
 
   const handleSubmit = (event) => {
@@ -98,9 +102,9 @@ function SignupForm(props) {
 
 
   return (
-    <div className="signup-card">
+    <div className={styles['signup-card']}>
       <h2>{`${isLogIn ? "Login" : "Sign Up"}`}</h2>
-      <form onSubmit={handleSubmit} className="signup-form">
+      <form onSubmit={handleSubmit} className={styles['signup-form']}>
         <label>
           Email:
           <input
@@ -132,14 +136,14 @@ function SignupForm(props) {
         <button type="submit">{`${isLogIn ? "Login" : "Sign Up"}`}</button>
       </form>
       {isLogIn ? (
-        <p className="forgot-password">
+        <p className={styles['forgot-password']}>
           <a href="/forgot-password">Forgot password?</a>
         </p>
       ) : (
         ""
       )}
-      <button className="login-card" onClick={handleLoginClick}>
-        <p className="login-text">{`${isLogIn ? "Create New Account" : "Already Have An Account ? Login"
+      <button className={styles['login-card']} onClick={handleLoginClick}>
+        <p className={styles['login-text']}>{`${isLogIn ? "Create New Account" : "Already Have An Account ? Login"
           }`}</p>
       </button>
     </div>

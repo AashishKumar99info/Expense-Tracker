@@ -1,5 +1,5 @@
 import { useState } from "react";
-import './ForgotPassword.css'
+import styles from './ForgotPassword.module.css'
 
 async function sendPasswordResetEmail(email , success) {
     try {
@@ -37,7 +37,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="forgot-password-container">
+    <div className={styles['forgot-password-container']}>
       <h2>Forgot Password</h2>
       <form onSubmit={handleResetPassword}>
         <label htmlFor="email">Email</label>
@@ -50,7 +50,7 @@ function ForgotPassword() {
         />
         <button type="submit">Reset Password</button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className={styles['message']}>{message}</p>}
     </div>
   );
 }

@@ -108,14 +108,14 @@ const Home = () => {
     <>
      <div className={[styles.card, isDarkMode ? styles.dark : ''].join(' ')} >
         <div className={styles.welcome}> 
-          <p>Welcome To Expense Tracker !!! </p>
+          <p style={{fontSize:"2rem",fontFamily:'cursive'}}>Welcome To Your Expense Tracker !!! </p>
           <button className={styles['button-logout']} onClick={logoutHandler}>
             Logout
           </button>
           <button
             onClick={() => navTo(`/profile/${idToken}`)}
           >
-            <div>Your Profile Is Incomplete ! Complete Now</div>
+            <div>Update Your Profile</div>
         
           </button>
         </div>

@@ -1,11 +1,14 @@
 .welcome{
     display: flex;
-    width: 100vw;
+    width: auto;
+    margin: 10px ;
     height: 60px;
     padding: 20px 20px;
-    border-bottom: 2px solid gray;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }   
 .button-logout{
